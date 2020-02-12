@@ -1,31 +1,34 @@
 package com.zeppe.minhasfinancas.service;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.zeppe.minhasfinancas.exceptions.RegraNegocioException;
-import com.zeppe.minhasfinancas.model.entity.Usuario;
 import com.zeppe.minhasfinancas.model.repository.UsuarioRepository;
+import com.zeppe.minhasfinancas.service.imp.UsuarioServiceImp;
 
-@SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class UsuarioServiceTest {
 
-	@Autowired
 	UsuarioService service;
-	
-	@Autowired
+	@MockBean //this annotation causes that with userRepository is mocked
 	UsuarioRepository usuarioRepository;
+	
+	@Before
+	public void setUp() {
+		service = new UsuarioServiceImp(usuarioRepository);
+	}
 	
 	@Test(expected = Test.None.class)//serves for validating that's method return a exception
 	public void deveValidarEmail() {
 		//scenario
-		usuarioRepository.deleteAll();
+		Mockito.when(usuarioRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
 		
 		//action
 		service.validarEmail("teste3@hotmail.com");
@@ -35,8 +38,7 @@ public class UsuarioServiceTest {
 	@Test(expected = RegraNegocioException.class)
 	public void deveLancarErrorAoValidarEmailQuandoExisteEmailCadastrado() {
 		//scenario
-		Usuario usuario = Usuario.builder().nome("teste").senha("teste").email("teste4@hotmail.com").build();
-		usuarioRepository.save(usuario);
+		Mockito.when(usuarioRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
 		
 		//action
 		service.validarEmail("teste4@hotmail.com");
