@@ -1,8 +1,13 @@
 package com.zeppe.minhasfinancas.service.imp;
 
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zeppe.minhasfinancas.exceptions.ErrorAutenticacao;
 import com.zeppe.minhasfinancas.exceptions.RegraNegocioException;
 import com.zeppe.minhasfinancas.model.entity.Usuario;
 import com.zeppe.minhasfinancas.model.repository.UsuarioRepository;
@@ -21,14 +26,23 @@ public class UsuarioServiceImp implements UsuarioService {
 
 	@Override
 	public Usuario autenticar(String email, String senha) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+		
+		if(!usuario.isPresent()) {
+			throw new ErrorAutenticacao("Usuario não Encontrado");
+		}
+		if(!usuario.get().getSenha().equals(senha)) {
+			throw new ErrorAutenticacao("Senha incorreta");
+		}
+		
+		return usuario.get();
 	}
 
 	@Override
+	@Transactional//this annotation'll do a transaction on datasource and will do commit
 	public Usuario salvarUsuario(Usuario usuario) {
-		// TODO Auto-generated method stub
-		return null;
+		validarEmail(usuario.getEmail());
+		return usuarioRepository.save(usuario);
 	}
 
 	@Override
