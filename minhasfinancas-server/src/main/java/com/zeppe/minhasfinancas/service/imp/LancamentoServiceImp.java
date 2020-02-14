@@ -48,7 +48,7 @@ public class LancamentoServiceImp implements LancamentoService {
 	}
 
 	@Override
-	public void atualizarLancameto(Lancamento lancamento, StatusLancamento status) {
+	public void atualizarStatus(Lancamento lancamento, StatusLancamento status) {
 		// TODO Auto-generated method stub
 		
 	}
