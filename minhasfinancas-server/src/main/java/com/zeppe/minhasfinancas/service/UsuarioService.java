@@ -1,5 +1,7 @@
 package com.zeppe.minhasfinancas.service;
 
+import java.util.Optional;
+
 import com.zeppe.minhasfinancas.model.entity.Usuario;
 
 public interface UsuarioService {
@@ -9,6 +11,8 @@ public interface UsuarioService {
 	Usuario salvarUsuario(Usuario usuario);
 	
 	void validarEmail(String Email);
+	
+	Optional<Usuario> obterPorId(Long id);
 	
 	
 }
